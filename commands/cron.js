@@ -6,7 +6,8 @@ const { replyMarkupMainConfig, dashboardMessage } = require('./variables');
 const { nextCycle } = require('../utils/nextCycle');
 const { tonPrice } = require('../utils/tonPrice');
 
-const cycleStart = shell.exec('bash getData.sh | awk "FNR == 1"').stdout;
+const cycleStart = shell.exec('bash ssh.sh | tail -n 3 | awk "FNR == 1"');
+// const cycleStart = shell.exec('bash getData.sh | awk "FNR == 1"').stdout;
 const currentNow = Math.floor(+new Date() / 1000);
 let since = parseInt(cycleStart) + 65536;
 if (currentNow > since) {
@@ -24,8 +25,14 @@ schedule.scheduleJob(
   () => {
     const cycleUpdate = () => {
       setInterval(async () => {
-        const totalStake = shell.exec('bash shell.sh | awk "FNR == 2"').stdout;
-        const totalReward = shell.exec('bash shell.sh | awk "FNR == 3"').stdout;
+        const totalStake = shell.exec(
+          'bash ssh.sh | tail -n 3 | awk "FNR == 2"'
+        );
+        const totalReward = shell.exec(
+          'bash ssh.sh | tail -n 3 | awk "FNR == 3"'
+        );
+        // const totalStake = shell.exec('bash shell.sh | awk "FNR == 2"').stdout;
+        // const totalReward = shell.exec('bash shell.sh | awk "FNR == 3"').stdout;
         // 사이클 채산성
         let increase =
           (parseInt(totalReward) / parseInt(totalStake)) * serviceFee;

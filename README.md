@@ -1,5 +1,7 @@
 # bne_mining_bot
 
+linux 서버에 mysql 설치
+
 의존성 라이브러리 설치
 
 ```

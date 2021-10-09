@@ -1,4 +1,3 @@
-const axios = require('axios');
 const { User, Amount, Profitability } = require('../models');
 const { bot } = require('../app');
 const { replyMarkupMainConfig, dashboardMessage } = require('./variables');
