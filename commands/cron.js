@@ -75,38 +75,38 @@ schedule.scheduleJob(
       }, 65536000);
     };
 
-    schedule.scheduleJob('30 9 * * *', async () => {
-      const users = await User.findAll({ attributes: ['user_id', 'id'] });
-      const profitability = await Profitability.findOne({ where: { id: 1 } });
-      const incomeStateGif =
-        'https://postfiles.pstatic.net/MjAyMTAxMTBfMjEy/MDAxNjEwMjY2NTI4MTM3.tAPXyS_ElO7psB9TQeOMaIuP5BZI2Iiori96vSpXzZcg.ODJ7ltezspBCTbL4SBTZSXmgLASwFqnu__J5vRJIsuwg.GIF.freefutsal/ton.gif?type=w966';
-
-      users.map((user) => {
-        const userId = user.dataValues.user_id;
-        const random = Math.floor(Math.random() * (60 - 1) + 1) * 1000;
-
-        Amount.findOne({ where: { owner: user.dataValues.id } }).then(
-          (info) => {
-            const message = dashboardMessage(
-              info.dataValues.staking,
-              info.dataValues.total_reward,
-              profitability.dataValues.total_profit,
-              info.dataValues.previous_reward,
-              profitability.dataValues.previous_profit,
-              nextCycle(),
-              await tonPrice(),
-              profitability.dataValues.updatedAt
-            );
-            setTimeout(() => {
-              bot.sendDocument(userId, incomeStateGif, {
-                caption: message,
-                parse_mode: 'HTML',
-                reply_markup: replyMarkupMainConfig,
-              });
-            }, random);
-          }
-        );
-      });
-    });
+    cycleUpdate();
   }
 );
+
+schedule.scheduleJob('30 9 * * *', async () => {
+  const users = await User.findAll({ attributes: ['user_id', 'id'] });
+  const profitability = await Profitability.findOne({ where: { id: 1 } });
+  const incomeStateGif =
+    'https://postfiles.pstatic.net/MjAyMTAxMTBfMjEy/MDAxNjEwMjY2NTI4MTM3.tAPXyS_ElO7psB9TQeOMaIuP5BZI2Iiori96vSpXzZcg.ODJ7ltezspBCTbL4SBTZSXmgLASwFqnu__J5vRJIsuwg.GIF.freefutsal/ton.gif?type=w966';
+
+  users.map((user) => {
+    const userId = user.dataValues.user_id;
+    const random = Math.floor(Math.random() * (60 - 1) + 1) * 1000;
+
+    Amount.findOne({ where: { owner: user.dataValues.id } }).then((info) => {
+      const message = dashboardMessage(
+        info.dataValues.staking,
+        info.dataValues.total_reward,
+        profitability.dataValues.total_profit,
+        info.dataValues.previous_reward,
+        profitability.dataValues.previous_profit,
+        nextCycle(),
+        await tonPrice(),
+        profitability.dataValues.updatedAt
+      );
+      setTimeout(() => {
+        bot.sendDocument(userId, incomeStateGif, {
+          caption: message,
+          parse_mode: 'HTML',
+          reply_markup: replyMarkupMainConfig,
+        });
+      }, random);
+    });
+  });
+});
