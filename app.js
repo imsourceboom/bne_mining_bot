@@ -10,7 +10,6 @@ exports.bot = new TelegramBot(token, { polling: true });
 sequelize.sync();
 
 require('./commands/start');
-// require('./commands/test');
 require('./commands/amount');
 require('./commands/state');
 require('./commands/cron');
