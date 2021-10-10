@@ -13,4 +13,4 @@ require('./commands/start');
 // require('./commands/test');
 require('./commands/amount');
 require('./commands/state');
-// require('./commands/cron');
+require('./commands/cron');

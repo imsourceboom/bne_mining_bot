@@ -16,6 +16,8 @@ bot.on('message', async (msg) => {
       where: { owner: user.dataValues.id },
     });
     const profitability = await Profitability.findOne({ where: { id: 1 } });
+    const nextCycleInfo = nextCycle();
+    const price = await tonPrice();
 
     const staking = stakingOwner.dataValues.staking;
     const rewardAmount =
@@ -28,8 +30,8 @@ bot.on('message', async (msg) => {
       profitability.dataValues.total_profit,
       stakingOwner.dataValues.previous_reward,
       profitability.dataValues.previous_profit,
-      nextCycle(),
-      await tonPrice(),
+      nextCycleInfo,
+      price,
       profitability.dataValues.updatedAt
     );
 

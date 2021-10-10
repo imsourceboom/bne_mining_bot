@@ -15,8 +15,6 @@ if (currentNow > since) {
 }
 let done = since + 600;
 
-const serviceFee = 95;
-
 const startTime = new Date(since * 1000).toString();
 const endTime = new Date(done * 1000).toString();
 
@@ -25,6 +23,7 @@ schedule.scheduleJob(
   () => {
     const cycleUpdate = () => {
       setInterval(async () => {
+        const serviceFee = 95;
         const totalStake = shell.exec(
           'bash ssh.sh | tail -n 3 | awk "FNR == 2"'
         );
@@ -84,6 +83,8 @@ schedule.scheduleJob('30 9 * * *', async () => {
   const profitability = await Profitability.findOne({ where: { id: 1 } });
   const incomeStateGif =
     'https://postfiles.pstatic.net/MjAyMTAxMTBfMjEy/MDAxNjEwMjY2NTI4MTM3.tAPXyS_ElO7psB9TQeOMaIuP5BZI2Iiori96vSpXzZcg.ODJ7ltezspBCTbL4SBTZSXmgLASwFqnu__J5vRJIsuwg.GIF.freefutsal/ton.gif?type=w966';
+  const nextCycleInfo = nextCycle();
+  const price = await tonPrice();
 
   users.map((user) => {
     const userId = user.dataValues.user_id;
@@ -96,8 +97,8 @@ schedule.scheduleJob('30 9 * * *', async () => {
         profitability.dataValues.total_profit,
         info.dataValues.previous_reward,
         profitability.dataValues.previous_profit,
-        nextCycle(),
-        await tonPrice(),
+        nextCycleInfo,
+        price,
         profitability.dataValues.updatedAt
       );
       setTimeout(() => {
