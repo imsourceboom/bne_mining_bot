@@ -83,7 +83,7 @@ schedule.scheduleJob(
   }
 );
 
-schedule.scheduleJob('30 14 * * *', async () => {
+schedule.scheduleJob('30 9 * * *', async () => {
   const users = await User.findAll({ attributes: ['user_id', 'id'] });
   const profitability = await Profitability.findOne({ where: { id: 1 } });
   const incomeStateGif =
