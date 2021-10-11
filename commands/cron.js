@@ -21,7 +21,7 @@ const endTime = new Date(done * 1000).toString();
 schedule.scheduleJob(
   { start: startTime, end: endTime, rule: '*/10 * * * *' },
   () => {
-    (async () => {
+    const callbackFunc = async () => {
       const serviceFee = 95;
       const totalStake = shell.exec('bash ssh.sh | tail -n 3 | awk "FNR == 2"');
       const totalReward = shell.exec(
@@ -67,65 +67,23 @@ schedule.scheduleJob(
           );
         }
       });
+    };
+
+    (async () => {
+      callbackFunc();
     })();
 
-    const cycleUpdate = () => {
+    const cycleUpdate = (callback) => {
       setInterval(async () => {
-        const serviceFee = 95;
-        const totalStake = shell.exec(
-          'bash ssh.sh | tail -n 3 | awk "FNR == 2"'
-        );
-        const totalReward = shell.exec(
-          'bash ssh.sh | tail -n 3 | awk "FNR == 3"'
-        );
-        // const totalStake = shell.exec('bash shell.sh | awk "FNR == 2"').stdout;
-        // const totalReward = shell.exec('bash shell.sh | awk "FNR == 3"').stdout;
-        // 사이클 채산성
-        let increase =
-          (parseInt(totalReward) / parseInt(totalStake)) * serviceFee;
-
-        const amount = await Amount.findAll({
-          attributes: ['total_reward', 'staking', 'owner'],
-        });
-
-        const result = amount.map((item, i) => {
-          // 사이클 보상 수량
-          const reward = ((item.dataValues.staking / 2) * increase) / 100;
-          // 기존 수량 + 새로운 보상
-          const plus = parseFloat(item.dataValues.total_reward) + reward;
-          // 채굴 수익률
-          const profitability = (plus / item.dataValues.staking) * 100;
-
-          Amount.update(
-            {
-              total_reward: plus,
-              previous_reward: reward,
-            },
-            {
-              where: { owner: item.dataValues.owner },
-            }
-          );
-
-          if (i == 0) {
-            Profitability.update(
-              {
-                previous_profit: increase,
-                total_profit: profitability,
-              },
-              {
-                where: { id: 1 },
-              }
-            );
-          }
-        });
-        cycleUpdate();
+        callback();
+        cycleUpdate(callback);
       }, 65536000);
     };
-    cycleUpdate();
+    cycleUpdate(callbackFunc);
   }
 );
 
-schedule.scheduleJob('30 9 * * *', async () => {
+schedule.scheduleJob('30 14 * * *', async () => {
   const users = await User.findAll({ attributes: ['user_id', 'id'] });
   const profitability = await Profitability.findOne({ where: { id: 1 } });
   const incomeStateGif =
