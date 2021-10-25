@@ -20,13 +20,13 @@ bot.on('message', async (msg) => {
     const price = await tonPrice();
 
     const staking = stakingOwner.dataValues.staking;
-    const rewardAmount =
-      (staking * profitability.dataValues.total_profit) / 100;
-    const miningAssetAmount = parseFloat(rewardAmount).toFixed(4);
+    // const rewardAmount =
+    //   (staking * profitability.dataValues.total_profit) / 100;
+    // const miningAssetAmount = parseFloat(rewardAmount).toFixed(4);
 
     const message = dashboardMessage(
       staking,
-      miningAssetAmount,
+      stakingOwner.dataValues.total_reward,
       profitability.dataValues.total_profit,
       stakingOwner.dataValues.previous_reward,
       profitability.dataValues.previous_profit,
