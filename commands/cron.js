@@ -73,13 +73,17 @@ schedule.scheduleJob(
       callbackFunc();
     })();
 
-    const cycleUpdate = (callback) => {
-      setInterval(async () => {
-        callback();
-        cycleUpdate(callback);
-      }, 65536000);
-    };
-    cycleUpdate(callbackFunc);
+    setInterval(async () => {
+      callbackFunc();
+    }, 65536000);
+
+    // const cycleUpdate = (callback) => {
+    //   setTimeout(async () => {
+    //     callback();
+    //     cycleUpdate(callback);
+    //   }, 65536000);
+    // };
+    // cycleUpdate(callbackFunc);
   }
 );
 
