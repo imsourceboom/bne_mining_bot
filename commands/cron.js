@@ -33,21 +33,6 @@ schedule.scheduleJob(
       let increase =
         (parseInt(totalReward) / parseInt(totalStake)) * serviceFee;
 
-      const profitability = await Profitability.findOne({ where: { id: 1 } });
-      // 총 채굴 수익률 + 사이클 수익률
-      const addProfit =
-        parseFloat(profitability.dataValues.total_profit) + increase;
-
-      Profitability.update(
-        {
-          previous_profit: increase,
-          total_profit: addProfit,
-        },
-        {
-          where: { id: 1 },
-        }
-      );
-
       const amount = await Amount.findAll({
         attributes: ['total_reward', 'staking', 'owner'],
       });
@@ -57,6 +42,8 @@ schedule.scheduleJob(
         const reward = ((item.dataValues.staking / 2) * increase) / 100;
         // 기존 수량 + 새로운 보상
         const plus = parseFloat(item.dataValues.total_reward) + reward;
+        // 누젹 채굴 수익률
+        const profitability = (plus / item.dataValues.staking) * 100;
 
         Amount.update(
           {
@@ -67,6 +54,18 @@ schedule.scheduleJob(
             where: { owner: item.dataValues.owner },
           }
         );
+
+        if (i == 0) {
+          Profitability.update(
+            {
+              previous_profit: increase,
+              total_profit: profitability,
+            },
+            {
+              where: { id: 1 },
+            }
+          );
+        }
       });
     };
 
